@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:mydb.db"
+}
+
+model User {
+  id          String   @id @default(cuid())
+  timeCreated DateTime @default(now())
+  timeUpdated DateTime @updatedAt
+
+  name           String   @unique
+  phone          String   @unique
+  profilePicture String
+  latGoingTo     Decimal?
+  longGoingTo    Decimal?
+  lat            Decimal?
+  long           Decimal?
+
+  outgoingRequests Request[] @relation("OutgoingRequests")
+  incomingRequests Request[] @relation("Incomingrequests")
+}
+
+model Request {
+  id          String   @id @default(cuid())
+  timeCreated DateTime @default(now())
+  timeUpdated DateTime @updatedAt
+
+  accepted     Boolean @default(false)
+  fromUserName String
+  toUserName   String
+  fromUser     User    @relation("OutgoingRequests", fields: [fromUserName], references: [name])
+  toUser       User    @relation("Incomingrequests", fields: [toUserName], references: [name])
+}
+
+model Reports {
+  id          String   @id @default(cuid())
+  timeCreated DateTime @default(now())
+  timeUpdated DateTime @updatedAt
+
+  longitude   Decimal
+  latitude    Decimal
+  severity    Int
+  description String
+}
